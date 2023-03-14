@@ -1,0 +1,214 @@
+{
+  "description": "IVR",
+  "states": [
+    {
+      "name": "Trigger",
+      "type": "trigger",
+      "transitions": [
+        {
+          "event": "incomingMessage"
+        },
+        {
+          "event": "incomingCall"
+        },
+        {
+          "event": "incomingConversationMessage"
+        },
+        {
+          "next": "call_user_1",
+          "event": "incomingRequest"
+        },
+        {
+          "event": "incomingParent"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 250,
+          "y": 50
+        }
+      }
+    },
+    {
+      "name": "gather_input",
+      "type": "gather-input-on-call",
+      "transitions": [
+        {
+          "next": "split_key_press",
+          "event": "keypress"
+        },
+        {
+          "next": "split_speech_result",
+          "event": "speech"
+        },
+        {
+          "event": "timeout"
+        }
+      ],
+      "properties": {
+        "voice": "alice",
+        "speech_timeout": "auto",
+        "offset": {
+          "x": 740,
+          "y": 310
+        },
+        "loop": 1,
+        "finish_on_key": "",
+        "say": "Hello,Press 1 or say yes. Press 2 or say no.",
+        "language": "en",
+        "stop_gather": false,
+        "gather_language": "en",
+        "profanity_filter": "true",
+        "timeout": 5
+      }
+    },
+    {
+      "name": "split_key_press",
+      "type": "split-based-on",
+      "transitions": [
+        {
+          "event": "noMatch"
+        },
+        {
+          "next": "say_play_1",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "1",
+              "arguments": [
+                "{{widgets.gather_input.Digits}}"
+              ],
+              "type": "equal_to",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "2",
+              "arguments": [
+                "{{widgets.gather_input.Digits}}"
+              ],
+              "type": "equal_to",
+              "value": "2"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "input": "{{widgets.gather_input.Digits}}",
+        "offset": {
+          "x": 90,
+          "y": 580
+        }
+      }
+    },
+    {
+      "name": "split_speech_result",
+      "type": "split-based-on",
+      "transitions": [
+        {
+          "event": "noMatch"
+        },
+        {
+          "next": "say_play_1",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "sales",
+              "arguments": [
+                "{{widgets.gather_input.SpeechResult}}"
+              ],
+              "type": "contains",
+              "value": "sales"
+            }
+          ]
+        },
+        {
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "support",
+              "arguments": [
+                "{{widgets.gather_input.SpeechResult}}"
+              ],
+              "type": "contains",
+              "value": "support"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "input": "{{widgets.gather_input.SpeechResult}}",
+        "offset": {
+          "x": 550,
+          "y": 590
+        }
+      }
+    },
+    {
+      "name": "say_play_1",
+      "type": "say-play",
+      "transitions": [
+        {
+          "event": "audioComplete"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 430,
+          "y": 840
+        },
+        "loop": 1,
+        "say": "thank you"
+      }
+    },
+    {
+      "name": "call_user_1",
+      "type": "make-outgoing-call-v2",
+      "transitions": [
+        {
+          "next": "gather_input",
+          "event": "answered"
+        },
+        {
+          "event": "busy"
+        },
+        {
+          "event": "noAnswer"
+        },
+        {
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "machine_detection_speech_threshold": "2400",
+        "detect_answering_machine": false,
+        "send_digits": "",
+        "sip_auth_username": "",
+        "offset": {
+          "x": 220,
+          "y": 240
+        },
+        "recording_status_callback": "",
+        "sip_auth_password": "",
+        "recording_channels": "mono",
+        "timeout": 60,
+        "machine_detection": "Enable",
+        "trim": "true",
+        "record": false,
+        "machine_detection_speech_end_threshold": "1200",
+        "machine_detection_timeout": "30",
+        "from": "{{flow.channel.address}}",
+        "to": "{{contact.channel.address}}",
+        "machine_detection_silence_timeout": "5000"
+      }
+    }
+  ],
+  "initial_state": "Trigger",
+  "flags": {
+    "allow_concurrent_calls": true
+  }
+}
