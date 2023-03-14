@@ -27,7 +27,7 @@ ngrok http 15020
 
 #2 Twilio Studio Configuration 
 
-#2 A ) Use flowwithhttpcallback.json  in studio to test  user respponse captured by HTTP callback
+#2 a ) Use flowwithhttpcallback.json  in studio to test  user respponse captured by HTTP callback
 
 1. Now go to twilio studio flow configuration  and copy the generated url of ngrok and paste that in REQUEST URL  of http_1 widget .
    Append /ivr/gatherResult to the ngrok url and choose REQUEST METHOD AS post. This will configure callback to REST controller from studio 
@@ -39,7 +39,7 @@ ngrok http 15020
    
 3. Check user response from http callback in console of springboot app . I have put sys pout in REST controller TwilioStudioReceiver.java
 
-#3 b ) Use flowwithouthttpcallback.json in studio to test  user respponse captured by HTTP callback
+#3 b ) Use flowwithouthttpcallback.json in studio to test  user respponse captured by Twilio studio V2 REST API
 
 In this case we do not need to worry about REST controller TwilioStudioReceiver.java
  But the issue is I am not able to get user response. I need help in context api coding
